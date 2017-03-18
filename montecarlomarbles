@@ -1,0 +1,62 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Mar 18 02:38:15 2017
+
+@author: lambdev
+"""
+
+import random
+import pandas as pd
+import numpy as np
+import math
+
+class jar_of_marbles(object):
+    def __init__(self,**kwargs):
+        self.marblesjar = pd.DataFrame(columns = ["color","count"])        
+        self.marbles_removed = 0 
+        self.colors_removed = []
+        for color, count in kwargs.items():
+            new_item = pd.DataFrame({"color":color, "count" :count}, index = [color])
+            self.marblesjar = self.marblesjar.append(new_item)
+            
+    def pick_marble_at_random(self):        
+        choice = random.randrange(0,len(self.marblesjar.keys()))
+        self.chosen_color = self.marblesjar.iloc[choice]["color"]        
+        self.colors_removed.append(self.chosen_color)
+        self.newcount = self.marblesjar.iloc[choice]["count"] - 1
+        self.marbles_removed += 1
+        new_item = pd.DataFrame({"count" : self.newcount, "color" : self.chosen_color}, index = [self.chosen_color])
+        self.marblesjar.update(new_item)
+        self.marblesjar = self.marblesjar.query("count != 0")
+        return self
+    
+
+
+def simulate_marble_selection(runs, number_to_select):    
+    results = {}
+    for x in range(runs):        
+        jar = jar_of_marbles(blue = 3, white = 3)
+        for i in range(number_to_select):            
+            jar = jar.pick_marble_at_random()
+        results[x] = jar.colors_removed
+    return results
+
+test = simulate_marble_selection(1000,3)
+
+def all_same(items):
+    return (all(x == items[0] for x in items))
+
+
+all_3_same = 0
+for x, result in test.items():
+    all_same_color = all_same(result)
+    if all_same_color:
+        all_3_same += 1 
+
+
+jar = jar_of_marbles(blue = 3, white = 3)
+jar = jar.pick_marble_at_random()
+
+        
+            
