@@ -1,0 +1,58 @@
+package com.company;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+import static java.lang.Math.E;
+
+/**
+ * Created by: Jamie Roland
+ * Created on: 3/18/2017
+ * Description:  Monte Carlo simulation with marbles
+ */
+public class Main
+{
+    public static void main(String[] args)
+    {
+        int attempts = 10000; // num times we run the simulation
+        int success = 0;    // num times simulate returns true( pick three marbles of the same color)
+
+        for(int i = 0; i < attempts; i++)  // runs the simulation
+        {
+            if(simulate())
+                success++;
+        }
+        System.out.println("choosing three marbles of the same color happened: " + success +" / " + attempts);
+    }
+    // simulation method that returns true if all three marbles were the same color, false if not
+    private static boolean simulate()
+    {
+        //int[] marbles = {1 , 1, 1, 0, 0, 0};  // 1 = blue...0 = white
+        List<Integer> marbleBowl = new ArrayList<>(Arrays.asList(1,1,1,0,0,0)); // 1 = blue...0 = white
+        int random;
+        int blueCount = 0;
+        int whiteCount = 0;
+
+        for(int i=0; i < 3; i++)
+        {
+            random = ThreadLocalRandom.current().nextInt(0,marbleBowl.size()); //standard in java 7+ apparently
+
+            if(marbleBowl.get(random) == 1)
+            {
+                blueCount++;
+            }
+            else
+            {
+                whiteCount++;
+            }
+            marbleBowl.remove(random); // takes away the marble that was picked
+
+        }
+        if(blueCount == 3  || whiteCount == 3)
+            return true;
+        else
+            return false;
+    }
+}
